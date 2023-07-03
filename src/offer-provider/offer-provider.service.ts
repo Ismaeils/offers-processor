@@ -2,7 +2,7 @@ import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { payload1, payload2 } from './payloads';
 import * as _ from 'lodash';
 import { ProviderOneOfferDto } from './dtos/provider-one-offer.dto';
-import { validatorDto } from './dtos/provider-validator.dto';
+import { transformAndValidateDto } from './validators/provider.validator';
 import { ProviderPayloadDto } from './dtos/provider-payload.dto';
 import { OfferProvidersEnum } from './enums/provider.enum';
 import { ProviderTwoOfferDto } from './dtos/provider-two-offer.dto';
@@ -26,7 +26,7 @@ export class OfferProviderService {
     const offers = [];
 
     for (const offer of rawOffers) {
-      const { hasErrors, objInstance } = await validatorDto(
+      const { hasErrors, objInstance } = await transformAndValidateDto(
         ProviderOneOfferDto,
         offer,
       );
@@ -44,7 +44,7 @@ export class OfferProviderService {
     const offers = [];
 
     for (const offer of rawOffers) {
-      const { hasErrors, objInstance } = await validatorDto(
+      const { hasErrors, objInstance } = await transformAndValidateDto(
         ProviderTwoOfferDto,
         offer,
       );

@@ -14,6 +14,20 @@ export class OfferService {
     private offerProviderService: OfferProviderService,
   ) {}
 
+  async fetchAndStoreLocal(offerProvider: string) {
+    // Fetching provider offers
+    const providerOffers = await this.offerProviderService.getMoreOffers(
+      offerProvider,
+    );
+    // Converting mapped offers into Offer entity
+    const offers: Offer[] = providerOffers.offers.map((offer) =>
+      Offer.toModel(offer),
+    );
+    // Store offers
+    const createableOffers = this.offersRepository.create(offers);
+    return await this.offersRepository.save(createableOffers);
+  }
+
   async create(offerDto: CreateOfferDto) {
     const createableOffers = this.offersRepository.create(
       Offer.toModel(offerDto),
@@ -30,24 +44,14 @@ export class OfferService {
   }
 
   async update(id: number, updateOfferDto: UpdateOfferDto) {
-    return await this.offersRepository.update(
-      { id },
-      Offer.toModel(updateOfferDto),
-    );
+    const offer = await this.offersRepository.findOne({ where: { id } });
+    return await this.offersRepository.save({
+      ...offer,
+      ...Offer.toModel(updateOfferDto),
+    });
   }
 
   async remove(id: number) {
     return await this.offersRepository.delete({ id });
-  }
-
-  async fetchLocal(offerProvider: string) {
-    const providerOffers = await this.offerProviderService.getMoreOffers(
-      offerProvider,
-    );
-    const offers: Offer[] = providerOffers.offers.map((offer) =>
-      Offer.toModel(offer),
-    );
-    const createableOffers = this.offersRepository.create(offers);
-    return await this.offersRepository.save(createableOffers);
   }
 }

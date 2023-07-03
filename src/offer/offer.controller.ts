@@ -16,9 +16,9 @@ import { UpdateOfferDto } from './dtos/update-offer.dto';
 export class OfferController {
   constructor(private readonly offerService: OfferService) {}
 
-  @Get('local-offers/:provider')
+  @Post('fetch-local/:provider')
   fetchLocalOffers(@Param('provider') provider: string) {
-    return this.offerService.fetchLocal(provider);
+    return this.offerService.fetchAndStoreLocal(provider);
   }
 
   @Post()
